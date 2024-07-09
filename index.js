@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require ('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,11 +27,28 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const hotelBooking = client.db ('roomBooking').collection('rooms')
-
+    const hotelBooking = client.db ('roomBooking').collection('rooms');
+    const roomBooking = client.db ('roomBooking').collection ('booking');
+   
+    // get all rooms data from db
     app.get ('/rooms', async (req,res) => {
         const result = await hotelBooking.find().toArray()
         res.send(result)
+    })
+
+    // get a single room data from db using job id
+    app.get ('/room/:id', async (req,res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId (id)}
+      const result = await hotelBooking.findOne (query)
+      res.send (result)
+    })
+
+    // Save a booking data in db
+    app.post ('/booking', async (req,res) => {
+      const booking =req.body
+      const result = await roomBooking.insertOne(booking)
+      res.send (result);
     })
     // Connect the client to the server	(optional starting in v4.7)
     // Send a ping to confirm a successful connection
