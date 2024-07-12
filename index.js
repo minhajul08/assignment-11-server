@@ -50,6 +50,54 @@ async function run() {
       const result = await roomBooking.insertOne(booking)
       res.send (result);
     })
+  //   app.post('/booking', async (req, res) => {
+  //     const booking = req.body;
+  
+  //     try {
+  //         // Validate the request body
+  //         if (!booking.bookingDate || !booking.email || !booking.photo || !booking.roomId) {
+  //             return res.status(400).send({ message: 'Invalid booking data' });
+  //         }
+  
+  //         // Check if the room is already booked
+  //         const existingBooking = await roomBooking.findOne({ roomId: booking.roomId, bookingDate: booking.bookingDate });
+  
+  //         if (existingBooking) {
+  //             return res.status(400).send({ message: 'This room is already booked on the selected date.' });
+  //         }
+  
+  //         // Insert the booking
+  //         const result = await roomBooking.insertOne(booking);
+  
+  //         // Update room availability
+  //         await rooms.updateOne({ _id: booking.roomId }, { $set: { available: false } });
+  
+  //         res.send(result);
+  //     } catch (error) {
+  //         console.error(error);
+  //         res.status(500).send({ message: 'Error booking the room', error });
+  //     }
+  // });
+  
+  
+
+     // get all rooms posted by a specific user
+     app.get ('/booking/:email', async (req,res) => {
+      const email = req.params.email
+      const query = { email}
+      const result = await roomBooking.find(query).toArray()
+      res.send (result)
+
+    })
+
+
+    // delete one rooms in db 
+    app.delete ('/booking/:id', async (req,res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId (id)}
+      const result = await roomBooking.deleteOne (query)
+      res.send (result)
+    })
     // Connect the client to the server	(optional starting in v4.7)
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
